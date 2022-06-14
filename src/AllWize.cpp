@@ -103,7 +103,6 @@ void AllWize::_init() {
         pinMode(_config_gpio, OUTPUT);
         digitalWrite(_config_gpio, LOW);
     }
-    randomSeed(analogRead(0));
     _access_number = random(0, 256);
 }
 

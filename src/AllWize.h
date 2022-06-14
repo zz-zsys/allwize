@@ -93,6 +93,7 @@ class AllWize {
     public:
 
         AllWize(HardwareSerial * serial, uint8_t reset_gpio = GPIO_NONE, uint8_t config_gpio = GPIO_NONE);
+		AllWize(HardwareSerial* serial, int8_t rx = -1, int8_t tx = -1, uint8_t reset_gpio = GPIO_NONE, uint8_t config_gpio = GPIO_NONE) : _stream(serial), _hw_serial(serial), _reset_gpio(reset_gpio), _config_gpio(config_gpio);
         #if not defined(ARDUINO_ARCH_SAMD) && not defined(ARDUINO_ARCH_ESP32)
         AllWize(SoftwareSerial * serial, uint8_t reset_gpio = GPIO_NONE, uint8_t config_gpio = GPIO_NONE);
         #endif

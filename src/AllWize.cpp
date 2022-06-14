@@ -41,6 +41,28 @@ AllWize::AllWize(HardwareSerial *serial, uint8_t reset_gpio, uint8_t config_gpio
     _init();
 }
 
+// -----------------------------------------------------------------------------
+// Init
+// -----------------------------------------------------------------------------
+
+/**
+ * @brief               AllWize object constructor
+ * @param serial        HardwareSerial object to communicate with the module
+ * @param reset_gpio    GPIO connected to the module RESET pin
+ * @param config_gpio   GPIO connected to the module CONFIG pin
+ */
+AllWize::AllWize(HardwareSerial* serial, int8_t rx, int8_t tx, uint8_t reset_gpio, uint8_t config_gpio) : _stream(serial), _hw_serial(serial), _reset_gpio(reset_gpio), _config_gpio(config_gpio) {
+#if defined(ARDUINO_ARCH_SAMD)
+	// Software serial not implemented for SAMD
+	assert(false);
+#elif defined(ARDUINO_ARCH_ESP32)
+	_stream = _hw_serial = new HardwareSerial(HARDWARE_SERIAL_PORT);
+#else
+	_stream = _sw_serial = new SoftwareSerial(_rx, _tx);
+#endif
+	_init();
+}
+
 #if not defined(ARDUINO_ARCH_SAMD) && not defined(ARDUINO_ARCH_ESP32)
 /**
  * @brief               AllWize object constructor

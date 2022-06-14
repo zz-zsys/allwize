@@ -1721,11 +1721,11 @@ bool AllWize::_decode() {
  */
 void AllWize::_flush() {
 
-    // Flush TX line
-    _stream->flush();
+    // // Flush TX line
+    // _stream->flush();
 
-    // Flush RX line
-    while (_stream->available()) _stream->read();
+    // // Flush RX line
+    // while (_stream->available()) _stream->read();
 
 }
 

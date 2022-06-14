@@ -146,8 +146,8 @@ void AllWize::_resetSerial() {
         _hw_serial->end();
 #if defined(ARDUINO_ARCH_ESP32)
         if ((_rx != -1) && (_tx != -1)) {
-            pinMode(_rx, FUNCTION_4);
-            pinMode(_tx, FUNCTION_4);
+            // pinMode(_rx, FUNCTION_4);
+            // pinMode(_tx, FUNCTION_4);
             _hw_serial->begin(_baudrate, SERIAL_8N1, _rx, _tx);
         } else {
             _hw_serial->begin(_baudrate);

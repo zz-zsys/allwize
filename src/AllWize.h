@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define RX_BUFFER_SIZE                  255
 #define DEFAULT_TIMEOUT                 100
 #define HARDWARE_SERIAL_PORT            1
-#define DEFAULT_MBUS_MODE               MBUS_MODE_N1
+#define DEFAULT_MBUS_MODE               MBUS_MODE_N2
 
 #ifndef USE_MEMORY_CACHE
 #define USE_MEMORY_CACHE                1

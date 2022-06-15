@@ -216,7 +216,7 @@ bool AllWize::reset() {
  * @brief               Cleans the RX/TX line
  */
 void AllWize::softReset() {
-    if (_setConfig(true)) _setConfig(false);
+    // if (_setConfig(true)) _setConfig(false);
     /*
     if (_send(CMD_ENTER_CONFIG) == 1) {
         _flush();
@@ -497,10 +497,11 @@ bool AllWize::available() {
         _buffer[_pointer++] = ch;
         when = millis();
 
-        #if defined(ARDUINO_ARCH_ESP8266)
+		#if defined(ARDUINO_ARCH_ESP8266) 
             yield();
+		elif defined(ARDUINO_ARCH_ESP32)
+			delay(1);
         #endif
-
     }
 
     // Check if message finished and decode it

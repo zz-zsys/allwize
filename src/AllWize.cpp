@@ -1932,3 +1932,8 @@ void AllWize::_niceDelay(uint32_t ms) {
     uint32_t start = millis();
     while (millis() - start < ms) delay(1);
 }
+
+bool AllWize::recacheMemory() {
+	_ready = _cacheMemory(_memory);
+	return _ready;
+}

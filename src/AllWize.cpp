@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "AllWize.h"
 #include <assert.h>
+#include "esp32-hal-log.h"
 
 // -----------------------------------------------------------------------------
 // Init
@@ -621,15 +622,18 @@ uint8_t AllWize::getControlInformation() {
  * @param channel       Channel number
  * @param persist       Persist the changes in non-volatile memory (defaults to False)
  */
-void AllWize::setChannel(uint8_t channel, bool persist) {
-    if (channel > 41) return;
+int8_t AllWize::setChannel(uint8_t channel, bool persist) {
+	bool ret = true;
+	if (channel > 41) return -1;
     if (persist) {
-        _setSlot(MEM_CHANNEL, channel);
+        ret = _setSlot(MEM_CHANNEL, channel);
+		if(!ret) return -2;
         if (MODULE_WIZE == _module) {
-            _setSlot(MEM_CHANNEL_RX, channel);
+            ret = _setSlot(MEM_CHANNEL_RX, channel);
+			if(!ret) return -3;
         }
     }
-    _sendCommand(CMD_CHANNEL, channel);
+    return _sendCommand(CMD_CHANNEL, channel) != -1? 0: -4;
 }
 
 /**
@@ -1265,7 +1269,10 @@ bool AllWize::_setConfig(bool value) {
  */
 int8_t AllWize::_sendCommand(uint8_t command, uint8_t *data, uint8_t len) {
     int8_t response = -1;
-    if (!_setConfig(true)) return response;
+    if (!_setConfig(true)) {
+        log_e("set config error in send command");
+        return response;
+    }
     if (_sendAndReceive(command) != -1) {
         response = _sendAndReceive(data, len);
     }
@@ -1430,6 +1437,8 @@ bool AllWize::_setMemory(uint8_t address, uint8_t data) {
     // Execute command
     bool ret = (_sendCommand(CMD_WRITE_MEMORY, buffer, 3) != -1);
 
+	if(!ret) log_e("failed to send write memory command");
+
     // Update cached memory
     #if USE_MEMORY_CACHE
         if (ret) _memory[address] = data;
@@ -1512,7 +1521,10 @@ bool AllWize::_setSlot(uint8_t slot, uint8_t *data, uint8_t len) {
  */
 bool AllWize::_setSlot(uint8_t slot, uint8_t data) {
     uint8_t address = _getAddress(slot);
-    if (0xFF == address) return false;
+    if (0xFF == address) {
+        log_e("invalid address");
+        return false;
+    }
     return _setMemory(address, data);
 }
 

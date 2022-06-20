@@ -125,7 +125,7 @@ class AllWize {
         void slave();
         void repeater();
 
-        void setChannel(uint8_t channel, bool persist = false);
+        int8_t setChannel(uint8_t channel, bool persist = false);
         void setPower(uint8_t power, bool persist = false);
         void setDataRate(uint8_t dr);
         void setMode(uint8_t mode, bool persist = false);

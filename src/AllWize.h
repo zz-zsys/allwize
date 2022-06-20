@@ -194,6 +194,8 @@ class AllWize {
         void setCounter(uint16_t counter);
         uint16_t getCounter();
 
+		bool recacheMemory();
+
     protected:
 
         void _init();

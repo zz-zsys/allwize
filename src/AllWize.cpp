@@ -26,7 +26,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "AllWize.h"
 #include <assert.h>
+
+#if defined(ARDUINO_ARCH_ESP32)
 #include "esp32-hal-log.h"
+#else
+#define log_e(...) { \
+	char __arg[256]; \
+	snprintf(__arg, sizeof(__arg), __VA_ARGS__); \
+	Serial.println(__arg); \
+}
+
+#define log_i(...) { \
+	char __arg[256]; \
+	snprintf(__arg, sizeof(__arg), __VA_ARGS__); \
+	Serial.println(__arg); \
+}
+
+#endif
+
 
 // -----------------------------------------------------------------------------
 // Init
@@ -1270,7 +1287,7 @@ bool AllWize::_setConfig(bool value) {
 int8_t AllWize::_sendCommand(uint8_t command, uint8_t *data, uint8_t len) {
     int8_t response = -1;
     if (!_setConfig(true)) {
-        log_e("set config error in send command");
+        log_e("[ERROR] set config error in send command");
         return response;
     }
     if (_sendAndReceive(command) != -1) {
@@ -1289,7 +1306,10 @@ int8_t AllWize::_sendCommand(uint8_t command, uint8_t *data, uint8_t len) {
  */
 int8_t AllWize::_sendCommand(uint8_t command, uint8_t data) {
     int8_t response = -1;
-    if (!_setConfig(true)) return response;
+    if (!_setConfig(true)) {
+		log_e("[ERROR] set config error in send command");
+		return response;
+	}
     if (_sendAndReceive(command) != -1) {
         response = _sendAndReceive(data);
     }
@@ -1305,7 +1325,10 @@ int8_t AllWize::_sendCommand(uint8_t command, uint8_t data) {
  */
 int8_t AllWize::_sendCommand(uint8_t command) {
     int8_t response = -1;
-    if (!_setConfig(true)) return response;
+    if (!_setConfig(true)) {
+		log_e("[ERROR] set config error in send command");
+		return response;
+	}
     response = _sendAndReceive(command);
     _setConfig(false);
     return response;
@@ -1437,7 +1460,7 @@ bool AllWize::_setMemory(uint8_t address, uint8_t data) {
     // Execute command
     bool ret = (_sendCommand(CMD_WRITE_MEMORY, buffer, 3) != -1);
 
-	if(!ret) log_e("failed to send write memory command");
+	if(!ret) log_e("[ERROR] Failed to send write memory command");
 
     // Update cached memory
     #if USE_MEMORY_CACHE
@@ -1522,7 +1545,7 @@ bool AllWize::_setSlot(uint8_t slot, uint8_t *data, uint8_t len) {
 bool AllWize::_setSlot(uint8_t slot, uint8_t data) {
     uint8_t address = _getAddress(slot);
     if (0xFF == address) {
-        log_e("invalid address");
+        log_e("[ERROR] Invalid address");
         return false;
     }
     return _setMemory(address, data);
